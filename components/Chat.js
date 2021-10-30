@@ -78,7 +78,11 @@ export default class Chat extends React.Component {
     });
   }
 
-  
+  componentWillUnmount() {
+    this.authUnsubscribe();
+    this.authUnsubscribe();
+  }
+
   // Add messages to database
   addMessages() { 
     const message = this.state.messages[0];
@@ -106,7 +110,12 @@ export default class Chat extends React.Component {
   onSend(messages = []) {
     this.setState((previousState) => ({
       messages: GiftedChat.append(previousState.messages, messages),
-    }));
+    }),
+    () => {
+      this.addMessages();
+      // Calls function saves to local storage
+      this.saveMessages();
+    });
   }
 
     // Retrieve current messages and store them in the state: messages
