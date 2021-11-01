@@ -6,6 +6,10 @@ import { View, Text, Button, StyleSheet, TextInput, Platform, KeyboardAvoidingVi
 const firebase = require('firebase');
 require('firebase/firestore');
 
+//import async storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+
 
 
 
@@ -42,6 +46,20 @@ export default class Chat extends React.Component {
   
 
   componentDidMount() {
+    this.getMessages();
+
+    //check if user online or offline
+    NetInfo.fetch().then(connection => {
+      if (connection.isConnected) {
+        this.setState({ isConnected: true });
+        console.log('online');
+      } else {
+        console.log('offline');
+        this.setState({ isConnected: false })
+        // Calls messeages from offline storage
+        this.getMessages();
+      }
+    });
 
     this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
@@ -83,6 +101,19 @@ export default class Chat extends React.Component {
     this.authUnsubscribe();
   }
 
+  //Get messages
+  async getMessages() {
+    let messages = '';
+    try {
+      messages = await AsyncStorage.getItem('messages') || [];
+      this.setState({
+        messages: JSON.parse(messages)
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   // Add messages to database
   addMessages() { 
     const message = this.state.messages[0];
@@ -102,6 +133,18 @@ export default class Chat extends React.Component {
   async saveMessages() {
     try {
       await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  //delete messsage
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem('messages');
+      this.setState({
+        messages: []
+      })
     } catch (error) {
       console.log(error.message);
     }
@@ -139,6 +182,18 @@ export default class Chat extends React.Component {
         messages,
      });
     }
+
+//if offline dont render inputbar
+renderInputToolbar(props) {
+  if (this.state.isConnected == false) {
+  } else {
+    return(
+      <InputToolbar
+      {...props}
+      />
+    );
+  }
+}
 
 // change chat bubble color
   renderBubble(props) {
