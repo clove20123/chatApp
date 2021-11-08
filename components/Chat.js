@@ -1,7 +1,8 @@
 import React from 'react';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat'
 import { View, Text, Button, StyleSheet, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
-import CustomActions from './CustomActions';
+//import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 //Firebase database
 const firebase = require('firebase');
@@ -210,9 +211,9 @@ renderInputToolbar(props) {
     )
   }
 
-  renderCustomActions(props) {
-    return <CustomActions { ...props } />;
-  };
+  //renderCustomActions(props) {
+    //return <CustomActions { ...props } />;
+  //};
 
   render() {
     let name = this.props.route.params.name;
@@ -222,7 +223,8 @@ renderInputToolbar(props) {
       <View style={{flex:1}}>
        <GiftedChat
          renderBubble={this.renderBubble.bind(this)}
-         renderActions={ this.renderCustomActions }
+         renderInputToolbar={this.renderInputToolbar.bind(this)}
+         //renderActions={ this.renderCustomActions }
          messages={this.state.messages}
          onSend={messages => this.onSend(messages)}
          user={this.state.user}
