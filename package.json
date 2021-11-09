@@ -29,7 +29,9 @@
     "react-native-web": "~0.13.12",
     "react-navigation": "^4.4.4",
     "expo-location": "~12.1.2",
-    "react-native-maps": "0.28.0"
+    "react-native-maps": "0.28.0",
+    "expo-media-library": "~12.1.2",
+    "expo-camera": "~11.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"

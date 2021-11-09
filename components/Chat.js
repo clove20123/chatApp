@@ -1,7 +1,7 @@
 import React from 'react';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat'
 import { View, Text, Button, StyleSheet, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
-//import CustomActions from './CustomActions';
+import CustomActions from './CustomActions';
 import MapView from 'react-native-maps';
 
 //Firebase database
@@ -186,16 +186,14 @@ export default class Chat extends React.Component {
     }
 
 //if offline dont render inputbar
-renderInputToolbar(props) {
-  if (this.state.isConnected == false) {
+renderInputToolbar = (props) => {
+  console.log("renderInputToolbar --> props", props.isConnected);
+  if (props.isConnected === false) {
+    return <InputToolbar {...props} />
   } else {
-    return(
-      <InputToolbar
-      {...props}
-      />
-    );
+    return <InputToolbar {...props} />;
   }
-}
+};
 
 // change chat bubble color
   renderBubble(props) {
@@ -211,9 +209,28 @@ renderInputToolbar(props) {
     )
   }
 
-  //renderCustomActions(props) {
-    //return <CustomActions { ...props } />;
-  //};
+  renderCustomActions(props) {
+    return <CustomActions { ...props } />;
+  };
+
+    // Renders Map view
+    renderCustomView(props) {
+      const { currentMessage } = props;
+      if (currentMessage.location) {
+        return (
+          <MapView
+            style={{ width: 150, height: 100, borderRadius: 13, margin: 8 }}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+        );
+      }
+      return null;
+    }
 
   render() {
     let name = this.props.route.params.name;
@@ -224,7 +241,8 @@ renderInputToolbar(props) {
        <GiftedChat
          renderBubble={this.renderBubble.bind(this)}
          renderInputToolbar={this.renderInputToolbar.bind(this)}
-         //renderActions={ this.renderCustomActions }
+         renderActions={ this.renderCustomActions }
+         renderCustomView={this.renderCustomView}
          messages={this.state.messages}
          onSend={messages => this.onSend(messages)}
          user={this.state.user}
