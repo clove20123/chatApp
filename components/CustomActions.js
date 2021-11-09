@@ -120,7 +120,6 @@ export default class CustomActions extends React.Component {
 
   /**
    * function that handles communication features
-   * @function onActionPress
    */
   onActionPress = () => {
     const options = [
