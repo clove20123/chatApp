@@ -114,6 +114,7 @@ export default class Chat extends Component {
                .onSnapshot(this.onCollectionUpdate);
            });
        } else {
+         console.log('offline');
          this.setState({
            isConnected: false,
          });
@@ -121,10 +122,8 @@ export default class Chat extends Component {
          this.getMessages();
        }
      });
-   }
 
-  componentDidMount() {
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+     this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
         firebase.auth().signInAnonymously();
       }
@@ -136,7 +135,8 @@ export default class Chat extends Component {
 
       this.unsubscribe = this.referenceChatMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
     });
-  }
+   }
+
 
   componentWillUnmount() {
     this.unsubscribe();
@@ -227,8 +227,8 @@ export default class Chat extends Component {
    */
   renderInputToolbar = (props) => {
     console.log("renderInputToolbar --> props", props.isConnected);
-    if (props.isConnected === false) {
-      return <InputToolbar {...props} />
+    if (this.state.isConnected === false) {
+      console.log('offline')
     } else {
       return <InputToolbar {...props} />;
     }
